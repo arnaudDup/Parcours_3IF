@@ -1,0 +1,169 @@
+Requete XQuery Partie2. 
+
+Requete 1) 
+
+Premierement en utilisant XPath: 
+
+	<phrase>
+	{
+	  for $sen in // phrase
+	  where $sen[@langue = 'fr'] 
+	  order by $sen ascending
+	  return $sen
+	}
+	</phrase>
+
+Deuxiement en utilisant uniquement XQuery: 
+
+	<phrase>
+	{
+	  for $sen in // phrase
+	  where some $mc in $sen/@langue satisfies $mc eq 'fr' 
+	  order by $sen ascending
+	  return $sen
+	}
+	</phrase>
+
+Requete 2)
+
+Premierement en utilisant XPath: 
+
+<phrase>
+	{
+    
+	  for $sen in // phrase
+     (: Selection sur la langue :)
+	  where $sen [@langue = 'fr']  
+    (: nous vérifion que la phrase contient effectivement le mot mouton :) 
+    return
+	    if (contains($sen,'mouton'))
+	    then <phraseFrMouton>{ data($sen) }</phraseFrMouton>
+      else empty
+}    
+</phrase>
+
+Deuxiement en utilisant uniquement XQuery: 
+<phrase>
+	{
+    
+	  for $sen in // phrase
+     (: Selection sur la langue :)
+	  where some $mc in $sen/@langue satisfies $mc eq 'fr' 
+    (: nous vérifion que la phrase contient effectivement le mot mouton :) 
+    return
+	    if (contains($sen,'mouton'))
+	    then <phraseFrMouton>{ data($sen) }</phraseFrMouton>
+      else empty
+}    
+</phrase>
+
+Requete 3)
+
+<paragraphe>
+	{
+    (: Parcours de l'ensemble des paragraphes :)
+	  for $para in // paragr
+      
+    return
+      <infosParagraphe>
+      {
+        (: Parcours de l'ensemble des paragraphes :)
+        $para/@type,
+        element {"nbphrases"} { count($para/phrase) },
+        element {"modalies"} { distinct-values($para/phrase/@modalite) },
+        element {"locuteurs"} { distinct-values($para/phrase/@locuteur)}
+      } 
+      </infosParagraphe>
+}    
+</paragraphe>
+
+
+--> A voir comment enlever les balises paragraphes.
+--> Pour cela il faut voir comment inserer un saut a la ligne.
+
+Requete 4)
+
+<VersionFraçaise>
+	{
+    (: Parcours de l'ensemble des paragraphes :)
+	  for $para in // paragr
+      (: Parcours de l'ensemble des phrases dont la langues est française :)
+      for $sen in // $para/phrase[@langue = 'fr']
+      
+      return
+      element {"paragraphes"}
+      {
+        if($sen is $para/phrase[position()= 1])
+          then data(concat('	',$sen))
+        else if ($sen is $para/phrase[last()])
+          then data(concat($sen,'\n'))
+        else data($sen)
+      }   
+}    
+</VersionFraçaise>
+
+Requete 5) 
+
+En conserversant la structure de la denriere requetes.
+<VersionFraçaise>
+	{
+    (: Parcours de l'ensemble des paragraphes :)
+	  for $para in // paragr
+      (: Parcours de l'ensemble des phrases dont la langues est française :)
+      for $sen in // $para/phrase[@langue = 'fr']
+      
+      return
+      element {"paragraphes"}
+      {
+        if($sen is $para/phrase[position()= 2])
+        then data($sen)
+        else empty
+      
+      }   
+}    
+</VersionFraçaise>
+
+
+En passant par une structure avec une seule boucle. 
+<VersionFraçaise>
+	{
+	  for $sen2 in //paragr/phrase[@langue= 'fr'][position() = 2]
+    return
+     element {"phrase2"} {data($sen2)}
+  }      
+</VersionFraçaise>
+
+
+Requete 6) 
+
+Avec l'utilisation d'une boucle for
+<DialogueNarrateur>
+	{
+    	for $sent in // paragr[@type = 'dialogue']/phrase[@locuteur = 'Narrateur'][@langue = 'fr']
+    	return $sent
+  	}      
+</DialogueNarrateur>
+
+Sans boucle For
+
+<DialogueNarrateur>
+	{
+     //paragr[@type = 'dialogue']/phrase[@locuteur = 'Narrateur'][@langue = 'fr']
+  }      
+</DialogueNarrateur>
+
+
+// Voir pour la variable qui n'est plus accessible dans le for.
+Requete 7)
+<DialogueNarrateur>
+	{
+    (:On défini la variable nous permettant d'acceder au chemin plus rapidement:)
+    let $chemin := //paragr/phrase[@locuteur = 'LePetitPrince'][@langue = 'fr'][contains(.,'mouton')]
+    
+    return
+      element {"nbLignes"}{count($chemin)},
+      element {"phrasePetitPrince"}{for $sen in //paragr/phrase[@locuteur = 'LePetitPrince'][@langue = 'fr'][contains(.,'mouton')] return $sen}
+  }      
+</DialogueNarrateur>
+
+
