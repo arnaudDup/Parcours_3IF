@@ -1,0 +1,32 @@
+<style type="text/css">
+
+        .instruction {
+	        font-style: italic;
+	        color: #006600;
+        }
+        .thumbnail-size {
+            width: 96px;
+            padding-right: 10px
+        }
+        .media-list li {
+            padding: 5px
+        }
+        /* Nous ajoutons l'attribut body permettant de modifier le fond et la couleur du texte */
+        body
+		{
+    		background : white; /* Le fond de la page sera noir */
+   			color: black; /* Le texte de la page sera blanc */
+		}
+		/* Nous ajoutons l'attribut bouton1 */
+		#myButton1
+		{
+   			color: black; /* Le texte de la page sera blanc */
+		}
+
+		#Binome
+		{
+   			color: red; 
+   			font-weight: bold;
+		}
+
+</style>

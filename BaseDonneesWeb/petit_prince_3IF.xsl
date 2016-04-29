@@ -4,7 +4,7 @@
 
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
-	<xsl:output method="html"/>
+	<xsl:output method="text"/>
 	<xsl:template match="/">
 	<html>
 		<head>
@@ -64,42 +64,26 @@
 							<xsl:apply-templates select="/texte/entete/infos/auteur"/>
 							<!--  Partie Date -->
 							<xsl:text> But du Tp du </xsl:text>
-							<xsl:value-of  select ="//date"/>
+							<xsl:apply-templates select="//date"/>
 							<xsl:text> : </xsl:text>
 							<!--  Partie But -->
-							<xsl:value-of  select ="//but"/>
+							<xsl:apply-templates select="//but"/>
 							<br/>
-							<xsl:text>Auteurs : </xsl:text>
+							
 							<!--
 								Nous cherchons à affiner le résultat en fonction, de plusieurs paramétres:
 									- Premierement en fonction du nombre d'étudiant travaillant sur le projet.- Deuxiement en fonction des différents binomes des personnes
 									  travaillant sur le projet.
 							-->
+							<xsl:text>Auteurs : </xsl:text>
 							<xsl:for-each select="//mise_en_forme_par/auteur">
-								<xsl:choose>
-									
-									<xsl:when test="position()=last()">
-										<xsl:value-of  select ="."/>
-										<xsl:text> (</xsl:text>
-											<xsl:value-of  select ="./@NoBinome"/>
-											<xsl:text>) </xsl:text>
-									</xsl:when>
-									
-									<xsl:otherwise>
-										<xsl:value-of  select ="."/>
-										<xsl:if test="count(/texte/entete/infos/mise_en_forme_par/auteur [not( preceding::auteur/@NoBinome = @NoBinome )]/@NoBinome) > 1">
-											<xsl:text> (</xsl:text>
-											<xsl:value-of  select ="./@NoBinome"/>
-											<xsl:text>) </xsl:text>	
-										</xsl:if>
-										<xsl:text> et </xsl:text>
-									</xsl:otherwise>
-								</xsl:choose>
+								<xsl:apply-templates select="."/>
 							</xsl:for-each>
+							
 							<!--  Partie Mail -->
 							<br/> 
 							<xsl:text> Email du responsable : </xsl:text>
-							<xsl:value-of  select ="//email"/>
+							<xsl:apply-templates select="//email"/>
 						</blockquote>
 					</td>
 				</tr>
@@ -114,6 +98,56 @@
 		Permettant de ne pas les afficher.
 	-->
 	<xsl:template match="lien">
+	</xsl:template> 
+
+	<!-- 
+		Template permettant de définir le mise en forme de la date.
+	-->
+	<xsl:template match="//date">
+		<xsl:apply-templates/>
+	</xsl:template> 
+
+	<!-- 
+		Template permettant de définir le mise en forme du but.
+	-->
+	<xsl:template match="//but">
+		<xsl:apply-templates/>
+	</xsl:template> 
+
+	<!-- 
+		Template permettant de définir le mise en forme du mail.
+	-->
+	<xsl:template match="//email">
+		<xsl:apply-templates/>
+	</xsl:template> 
+
+	<!-- 
+		Template permettant de définir le mise en forme de l'auteur.
+	-->
+	<xsl:template match="//mise_en_forme_par/auteur">	
+		<xsl:apply-templates/>
+		<xsl:if test="count(/texte/entete/infos/mise_en_forme_par/auteur [not( preceding::auteur/@NoBinome = @NoBinome )]/@NoBinome) > 1">
+			<xsl:apply-templates select="./@NoBinome"/>
+		</xsl:if>
+		<xsl:text> et </xsl:text>
+	</xsl:template> 
+
+	<!-- 
+		Template permettant de définir le mise en forme de l'auteur.
+		Si l'auteur est en derniere possition nous n'affichons pas le et séparant les auteurs.
+	-->
+	<xsl:template match="//mise_en_forme_par/auteur[position() = last()]">	
+		<xsl:apply-templates/>
+		<xsl:apply-templates select="./@NoBinome"/>
+	</xsl:template> 
+
+	<!-- 
+		Template permettant de définir le mise en forme du numéro de binome.
+	-->
+	<xsl:template match="//mise_en_forme_par/auteur/@NoBinome">
+		<xsl:text> (</xsl:text>		
+		<xsl:value-of  select ="."/>
+		<xsl:text>) </xsl:text>	
 	</xsl:template> 
 
 
@@ -173,13 +207,7 @@
 											<img src="images/{@locuteur}.png"/>
 										</td>
 										<td >
-											<!-- Nous vérifions que la phrase contient le mot mouton -->
-											<xsl:if test="count(.[contains(text(),'mouton')]) = 1">
-												<xsl:apply-templates select=".[contains(text(),'mouton')]"/>
-											</xsl:if>
-											<xsl:if test="count(.[contains(text(),'mouton')]) = 0">
-												<xsl:apply-templates/>
-											</xsl:if>
+											<xsl:apply-templates select="."/>
 										</td>
 									</tr>
 								</xsl:for-each>
@@ -200,7 +228,7 @@
 											<img src="images/{@locuteur}.png"/>
 										</td>
 										<td>
-											<xsl:apply-templates select=".[@langue='hu']"/>
+											<xsl:apply-templates select="."/>
 										</td>
 									</tr>
 								</xsl:for-each>
