@@ -6,9 +6,7 @@ function init()
 	// on cache les différents bouton qui doivent sortir une fois que nous avons appuyé sur
 	// différents boutons. 
 	afficher_cacher("TableauIndice2");
-	afficher_cacher("TableauIndice3"); 
-	afficher_cacher("TableauIndice4"); 
-  afficher_cacher("TableauIndice5");  
+	afficher_cacher("Button3");    
 }
 
 //--------------------------------------------------------------------------------------------------------------
@@ -21,17 +19,16 @@ function ChangerCouleur() {
   	var bouton = document.getElementById("myButton1");
   	// Nous testons la configuration actuel de la fenetre. 
 
-    console.log("la methode est appeler");
-
-  	if(body.style.background == "blue"){
+  	if(bouton.style.color == "white")
+	{
       body.style.background = "white"; /* Le fond de la page sera noir */
       bouton.style.color = "black";
-		}
-		else {
+	}
+	else 
+	{
       body.style.background = "blue";
       bouton.style.color = "white";
-      console.log("je reste identique");
-		}
+	}
 }
 
 //--------------------------------------------------------------------------------------------------------------
@@ -123,6 +120,7 @@ function Question2 (xmlDocumentUrl, xslDocumentUrl, newElementName){
 	// on affiche le bouton et la ligne du tableau contenant le bouton 3
   if(document.getElementById("TableauIndice2").style.visibility=="hidden"){
 	 afficher_cacher("TableauIndice2");
+	 afficher_cacher("Button3"); 
   }
 	     
 	// on affiche les resultats voulues.
@@ -275,7 +273,6 @@ function Question3 (remplacerCeci){
 	// on affiche le bouton et la ligne du tableau contenant le bouton 4
   if(document.getElementById("TableauIndice3").style.visibility=="hidden"){
    afficher_cacher("TableauIndice3");
-   afficher_cacher("TableauIndice5");
   }
 
   // Nous ajoutons l'image que nous devons afficher. 
@@ -321,11 +318,6 @@ function RemplacerContenuTousSeries(xmlDocumentUrl, xslDocumentUrl, newElementNa
   var elementtr; 
   var pas;
 
-  for (pas = 0; pas <  longueur ; pas ++)
-  {
-    //console.log(newXmlDocument.getElementsByTagName(newElementName)[pas]);
-  }
-
   for (pas = 0; pas < longueur; pas ++)
   {
     // creation <tr>
@@ -340,15 +332,15 @@ function RemplacerContenuTousSeries(xmlDocumentUrl, xslDocumentUrl, newElementNa
     elementr.appendChild(elementd);
 
     // Premier élément "elementName" du nouveau document (par exemple, "ul", "table"...)
-    var elementRecuperer = newXmlDocument.getElementsByTagName(newElementName)[pas];
+    var elementRecuperer = newXmlDocument.getElementsByTagName(newElementName)[0];
+	//console.log("Dans la boucle" + newXmlDocument.getElementsByTagName(newElementName)[pas]);
 
     if(elementRecuperer)
     {
       // mettons a jour les information demandé dans l'énoncé
-      var temp = elementRecuperer.getElementsByTagName('div')[0].getElementsByTagName('h4')[0].innerHTML;
-      elementRecuperer.getElementsByTagName('div')[0].setAttribute("id",temp)
-      var test = elementRecuperer.getElementsByTagName('div')[0].getElementsByTagName('div')[2].innerHTML;
-      elementRecuperer.getElementsByTagName('div')[0].getElementsByTagName('div')[2].setAttribute('href',test);
+	  var url = elementRecuperer.getElementsByTagName('div')[0].getElementsByTagName('div')[2].innerHTML;
+      elementRecuperer.getElementsByTagName('div')[0].setAttribute("id",url);
+      elementRecuperer.getElementsByTagName('div')[0].getElementsByTagName('div')[2].setAttribute('href',url);
       
       elementd.appendChild(elementRecuperer);
     }
@@ -374,7 +366,7 @@ function Question4(xmlDocumentUrl, xslDocumentUrl, newElementName){
   }
 	     
   RemplacerContenuTousSeries(xmlDocumentUrl, xslDocumentUrl, newElementName);
-
+  
 }
 
 //--------------------------------------------------------------------------------------------------------------
@@ -393,6 +385,7 @@ function ModificationAffichage (fichierJSON,idElementARemplacer)
       // de l'affichage en utilisant les autres fonctions.
 
       var titre = elementTab[pas].getElementsByTagName('div')[0].getElementsByTagName('h4')[0].innerHTML;
+	  var urlId = elementTab[pas].getElementsByTagName('div')[0].getElementsByTagName('div')[2].innerHTML;
 
 
       var ilist = recupererPremierElementEnfant(elementTab[pas]) // recupération de l'enfant <li>
@@ -403,7 +396,7 @@ function ModificationAffichage (fichierJSON,idElementARemplacer)
       var response = getHttpJSON(url);   
 
       var presenceLongueur = ilist.getElementsByTagName("a").length;
-      var refElement = window.document.getElementById(titre);
+      var refElement = window.document.getElementById(urlId);
 
       console.log(presenceLongueur);
       console.log(refElement);

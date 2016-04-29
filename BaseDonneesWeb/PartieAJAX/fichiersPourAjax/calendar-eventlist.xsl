@@ -9,8 +9,10 @@
     <!--
         Template permettant la mise en forme des titres de notre document. 
     -->
-    <xsl:template match="event">
-        <ul id = "listeInformations" class="media-list">
+    <xsl:template match="/">
+	<xsl:for-each select="//event">
+	<xsl:sort select ="title"/>
+        <ul id = "listeInformations" class="media-list">	
             <li>
                 <div id = "informations" class="media-body">
                     <h4 class="media-heading title"> <xsl:apply-templates select="title"/> </h4>
@@ -24,6 +26,7 @@
                 </div>
             </li>
         </ul>
+	</xsl:for-each>
     </xsl:template>
 
 
