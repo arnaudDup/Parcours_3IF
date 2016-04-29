@@ -1,0 +1,263 @@
+Requete XQuery Partie2. 
+
+Requete 1) 
+
+Premierement en utilisant XPath: 
+
+	<phrase>
+	{
+	  for $sen in // phrase
+	  where $sen[@langue = 'fr'] 
+	  order by $sen ascending
+	  return $sen
+	}
+	</phrase>
+
+Deuxiement en utilisant uniquement XQuery: 
+
+	<phrase>
+	{
+	  for $sen in // phrase
+	  where some $mc in $sen/@langue satisfies $mc eq 'fr' 
+	  order by $sen ascending
+	  return $sen
+	}
+	</phrase>
+
+	
+Resultat:
+ 
+<phrase>
+  <phrase locuteur="Narrateur" modalite="declarative" langue="fr">Alors j'ai dessiné.</phrase>
+  <phrase locuteur="Narrateur" modalite="declarative" langue="fr">Alors vous imaginez ma surprise, au levé du jour, quand une drôle de petite voix m'a réveillé.</phrase>
+  <phrase locuteur="Narrateur" modalite="declarative" langue="fr">Alors, faute de patience, comme j'avais hate de commencer le démontage de mon moteur, je griffonnai ce dessin-ci.</phrase>
+  <phrase locuteur="Narrateur" modalite="declarative" langue="fr">Aussi absurde que cela me semblaît à mille milles de tous les endroits habités et en danger de mort, je sortis de ma poche une feuille de papier et un stylographe.</phrase>
+  <phrase locuteur="LePetitPrince" modalite="exclamative" langue="fr">C'est tout à fait comme ça que je le voulais!</phrase>
+  <phrase locuteur="Narrateur" modalite="declarative" langue="fr">C'était pour moi une question de vie ou de mort. J'avais à peine de l'eau à boire pour huit jours.</phrase>
+  <phrase locuteur="Narrateur" modalite="declarative" langue="fr">Ca c'est la caisse.</phrase>
+  <phrase locuteur="LePetitPrince" modalite="impérative" langue="fr">Ca ne fait rien. Dessine-moi un mouton.</phrase>
+  <phrase locuteur="Narrateur" modalite="declarative" langue="fr">Ca suffira sûrement.</phrase>
+  ...
+ </phrase>
+ 
+ 
+Requete 2)
+
+Premierement en utilisant XPath: 
+
+<phrase>
+	{
+	  for $sen in // phrase
+     (: Selection sur la langue :)
+	    where $sen [@langue = 'fr'] and  contains($sen,'mouton')
+    (: nous vérifion que la phrase contient effectivement le mot mouton :) 
+    return <phraseFrMouton>{ data($sen) }</phraseFrMouton>
+}
+</phrase>
+
+Deuxiement en utilisant uniquement XQuery: 
+<phrase>
+	{
+    
+	  for $sen in // phrase
+     (: Selection sur la langue :)
+	  where some $mc in $sen/@langue satisfies $mc eq 'fr' 
+    (: nous vérifion que la phrase contient effectivement le mot mouton :) 
+    return
+	    if (contains($sen,'mouton'))
+	    then <phraseFrMouton>{ data($sen) }</phraseFrMouton>
+      else empty
+}    
+</phrase>
+
+<phrase>
+  <phraseFrMouton>S'il vous plaît... dessine-moi un mouton!</phraseFrMouton>
+  <phraseFrMouton>Dessine-moi un mouton...</phraseFrMouton>
+  <phraseFrMouton>S'il vous plaît... dessine-moi un mouton...</phraseFrMouton>
+  <phraseFrMouton>Ca ne fait rien. Dessine-moi un mouton.</phraseFrMouton>
+  <phraseFrMouton>Comme je n'avais jamais dessiné un mouton je refis, pour lui, un des deux seuls dessins dont j'étais capable.</phraseFrMouton>
+  <phraseFrMouton>J'ai besoin d'un mouton.</phraseFrMouton>
+  <phraseFrMouton>Dessine-moi un mouton.</phraseFrMouton>
+  <phraseFrMouton>Tu vois bien... ce n'est pas un mouton, c'est un bélier.</phraseFrMouton>
+  <phraseFrMouton>Je veux un mouton qui vive longtemps.</phraseFrMouton>
+  <phraseFrMouton>Le mouton que tu veux est dedans.</phraseFrMouton>
+  <phraseFrMouton>Crois-tu qu'il faille beaucoup d'herbe à ce mouton?</phraseFrMouton>
+  <phraseFrMouton>Je t'ai donné un tout petit mouton.</phraseFrMouton>
+</phrase>
+
+Requete 3)
+
+<paragraphe>
+	{
+    (: Parcours de l'ensemble des paragraphes :)
+	  for $para in // paragr  
+    return
+      <infosParagraphe>
+      {
+        (: Parcours de l'ensemble des paragraphes :)
+        element {"type"} {data($para/@type)},
+        element {"nbphrases"} { count($para/phrase) },
+        element {"modalites"} { distinct-values($para/phrase/@modalite) },
+        element {"locuteurs"} { distinct-values($para/phrase/@locuteur)}
+      } 
+      </infosParagraphe>
+}    
+</paragraphe>
+
+<paragraphe>
+  <infosParagraphe>
+    <types>narration</types>
+    <nbphrases>7</nbphrases>
+    <modalies>declarative</modalies>
+    <locuteurs>Narrateur</locuteurs>
+  </infosParagraphe>
+  <infosParagraphe>
+    <types>narration</types>
+    <nbphrases>7</nbphrases>
+    <modalies>declarative</modalies>
+    <locuteurs>Narrateur</locuteurs>
+  </infosParagraphe>
+  <infosParagraphe>
+    <types>dialogue</types>
+    <nbphrases>6</nbphrases>
+    <modalies>declarative exclamative</modalies>
+    <locuteurs>LePetitPrince Narrateur</locuteurs>
+  </infosParagraphe>
+  <infosParagraphe>
+    <types>narration</types>
+    <nbphrases>13</nbphrases>
+    <modalies>declarative</modalies>
+    <locuteurs>Narrateur</locuteurs>
+  </infosParagraphe>
+  <infosParagraphe>
+    <types>narration</types>
+    <nbphrases>9</nbphrases>
+    <modalies>declarative</modalies>
+    <locuteurs>Narrateur</locuteurs>
+  </infosParagraphe>
+  <infosParagraphe>
+    <types>dialogue</types>
+    <nbphrases>2</nbphrases>
+    <modalies>interrogative</modalies>
+    <locuteurs>Narrateur</locuteurs>
+  </infosParagraphe>
+  ...
+ </paragraphe>
+
+Requete 4)
+
+<VersionFraçaise>
+	{
+    (: Parcours de l'ensemble des paragraphes :)
+	  for $para in // paragr
+      (: Parcours de l'ensemble des phrases dont la langues est française :)
+      for $sen in // $para/phrase[@langue = 'fr'] 
+      return
+          if($sen is $para/phrase[position()= 1])
+            then data(concat('&#xA;	',$sen))
+          else data($sen)  
+}    
+</VersionFraçaise>
+
+<VersionFraçaise>
+	J'ai ainsi vécu seul, sans personne avec qui parler véritablement, jusqu'à une panne dans le désert du Sahara, il y a six ans. Quelque chose s'était cassé dans mon moteur, et comme je n'avais avec moi ni mécanicien, ni passagers, je me préparai à essayer de réussir, tout seul, une réparation difficile. C'était pour moi une question de vie ou de mort. J'avais à peine de l'eau à boire pour huit jours. 
+	Le premier soir je me suis donc endormi sur le sable à mille milles de toute terre habitée. J'étais bien plus isolé qu'un naufragé sur un rideau au milieu de l'océan. Alors vous imaginez ma surprise, au levé du jour, quand une drôle de petite voix m'a réveillé. Elle disait: 
+	S'il vous plaît... dessine-moi un mouton! Hein! Dessine-moi un mouton... 
+	J'ai sauté sur mes pieds comme si j'avais été frappé par la foudre. J'ai bien frotté mes yeux. J'ai bien regardé. Et j'ai vu un petit bonhomme tout à fait extraordinaire qui me considérait gravement. Voilà le meilleur portrait que, plus tard, j'ai réussi à faire de lui. Mais mon dessin,bien sùr, est beaucoup moins ravissant que le modèle. Ce n'est pas de ma faute. J'avais été découragé dans ma carrière de peintre par les grandes personnes, à l'age de six ans, et je n'avais rien appris à dessiner, sauf les boas fermés et les boas ouverts. 
+	Je regardai donc cette apparition avec des yeux tout ronds d'étonnement. N'oubliez pas que je me trouvais à mille milles de toute région habitée. Or mon petit bonhomme ne me semblait ni égaré, ni mort de fatigue, ni mort de faim, ni mort de soif, ni mort de peur. Il n'avait en rien l'apparence d'un enfant perdu au milieu du désert, à mille milles de toute région habitée. Quand je réussis enfin de parler, je lui dis: 
+	...
+<VersionFrançaise>
+
+Requete 5) 
+
+<VersionFraçaise>
+	{
+    (: Parcours de l'ensemble des paragraphes :)
+	  for $sen in (// paragr/phrase[@langue = 'fr'][position()= 2]) 
+      (: Parcours de l'ensemble des phrases dont la langues est française :)
+      return
+      element {"phrase2"} { data($sen)}   
+}    
+</VersionFraçaise>
+
+
+<VersionFraçaise>
+  <phrase2>Quelque chose s'était cassé dans mon moteur, et comme je n'avais avec moi ni mécanicien, ni passagers, je me préparai à essayer de réussir, tout seul, une réparation difficile.</phrase2>
+  <phrase2>J'étais bien plus isolé qu'un naufragé sur un rideau au milieu de l'océan.</phrase2>
+  <phrase2>Hein!</phrase2>
+  <phrase2>J'ai bien frotté mes yeux.</phrase2>
+  <phrase2>N'oubliez pas que je me trouvais à mille milles de toute région habitée.</phrase2>
+  <phrase2>Aussi absurde que cela me semblaît à mille milles de tous les endroits habités et en danger de mort, je sortis de ma poche une feuille de papier et un stylographe.</phrase2>
+  <phrase2>Celui du boa fermé.</phrase2>
+  <phrase2>Un boa c'est très dangereux, et un éléphant c'est très encombrant.</phrase2>
+  <phrase2>Il regarda attentivement, puis:</phrase2>
+  <phrase2>Fais-en un autre.</phrase2>
+  <phrase2>Mon ami sourit gentiment, avec indulgence:</phrase2>
+  <phrase2>Il a des cornes...</phrase2>
+  <phrase2>Mais il fut refusé, comme les précédents:</phrase2>
+  <phrase2>Je veux un mouton qui vive longtemps.</phrase2>
+  <phrase2>Et je lançai:</phrase2>
+  <phrase2>Le mouton que tu veux est dedans.</phrase2>
+  <phrase2>Crois-tu qu'il faille beaucoup d'herbe à ce mouton?</phrase2>
+  <phrase2>Tiens! Il s'est endormi...</phrase2>
+</VersionFraçaise>
+
+
+Requete 6) 
+
+Avec l'utilisation d'une boucle for
+<DialogueNarrateur>
+	{
+    	for $sent in // paragr[@type = 'dialogue']/phrase[@locuteur = 'Narrateur'][@langue = 'fr']
+    	return $sent
+  	}      
+</DialogueNarrateur>
+
+Sans boucle For
+
+<DialogueNarrateur>
+	{
+     //paragr[@type = 'dialogue']/phrase[@locuteur = 'Narrateur'][@langue = 'fr']
+  }      
+</DialogueNarrateur>
+
+<DialogueNarrateur>
+  <phrase locuteur="Narrateur" modalite="exclamative" langue="fr">Hein!</phrase>
+  <phrase locuteur="Narrateur" modalite="interrogative" langue="fr">Mais qu'est-ce que tu fais là?</phrase>
+  <phrase locuteur="Narrateur" modalite="declarative" langue="fr">Ca c'est la caisse.</phrase>
+  <phrase locuteur="Narrateur" modalite="declarative" langue="fr">Le mouton que tu veux est dedans.</phrase>
+  <phrase locuteur="Narrateur" modalite="interrogative" langue="fr">Pourquoi?</phrase>
+  <phrase locuteur="Narrateur" modalite="declarative" langue="fr">Ca suffira sûrement.</phrase>
+  <phrase locuteur="Narrateur" modalite="declarative" langue="fr">Je t'ai donné un tout petit mouton.</phrase>
+</DialogueNarrateur>
+
+
+// Voir pour la variable qui n'est plus accessible dans le for.
+Requete 7)
+<DialogueNarrateur>
+	{
+    (:On définit la variable nous permettant d'acceder au chemin plus rapidement:)
+    let $chemin := //paragr/phrase[@locuteur = 'LePetitPrince'][@langue = 'fr'][contains(.,'mouton')]
+    
+    return
+      element {"nbLignes"}{count($chemin)},
+      element {"phrasePetitPrince"}{for $sen in //paragr/phrase[@locuteur = 'LePetitPrince'][@langue = 'fr'][contains(.,'mouton')] return $sen}
+  }      
+</DialogueNarrateur>
+
+<DialogueNarrateur>
+  <nbLignes>9</nbLignes>
+  <phrasePetitPrince>
+    <phrase locuteur="LePetitPrince" modalite="declarative" langue="fr">S'il vous plaît... dessine-moi un mouton!</phrase>
+    <phrase locuteur="LePetitPrince" modalite="declarative" langue="fr">Dessine-moi un mouton...</phrase>
+    <phrase locuteur="LePetitPrince" modalite="declarative" langue="fr">S'il vous plaît... dessine-moi un mouton...</phrase>
+    <phrase locuteur="LePetitPrince" modalite="impérative" langue="fr">Ca ne fait rien. Dessine-moi un mouton.</phrase>
+    <phrase locuteur="LePetitPrince" modalite="declarative" langue="fr">J'ai besoin d'un mouton.</phrase>
+    <phrase locuteur="LePetitPrince" modalite="impérative" langue="fr">Dessine-moi un mouton.</phrase>
+    <phrase locuteur="LePetitPrince" modalite="declarative" langue="fr">Tu vois bien... ce n'est pas un mouton, c'est un bélier.</phrase>
+    <phrase locuteur="LePetitPrince" modalite="declarative" langue="fr">Je veux un mouton qui vive longtemps.</phrase>
+    <phrase locuteur="LePetitPrince" modalite="interrogative" langue="fr">Crois-tu qu'il faille beaucoup d'herbe à ce mouton?</phrase>
+  </phrasePetitPrince>
+</DialogueNarrateur>
+
+
