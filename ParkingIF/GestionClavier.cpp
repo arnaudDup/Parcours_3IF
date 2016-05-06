@@ -72,7 +72,6 @@ static Voiture * initilisationVoiture (char code)
 }
 
 static void arriveeVoiture (char code,unsigned int valeur )
-
 // Mode d'emploi:
 //
 // attribut:
@@ -98,7 +97,6 @@ static void arriveeVoiture (char code,unsigned int valeur )
 // fin de ArriveeVoiture
 
 static void departVoiture (char code, unsigned int valeur )
-
 // Mode d'emploi:
 //
 // attribut:

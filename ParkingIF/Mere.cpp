@@ -50,7 +50,6 @@ int main ()
 	
 	// -------------- INITIALISATION ---------------------- //
 	pid_t noClavier;
-
 	// Création du tableau de pid
 	pid_t TablePid [6];
 	// Création du tableau des mémoires partagés
@@ -69,9 +68,9 @@ int main ()
 	semctl(semID, PROF_BLAISE_PASCAL, SETVAL, 0);	// Au départ il n'y a aucun jeton donc la valeur initiale est 0 	
 	semctl(semID, AUTRE_BLAISE_PASCAL, SETVAL, 0);	// Au départ il n'y a aucun jeton donc la valeur initiale est 0 
 	semctl(semID, ENTREE_GASTON_BERGER, SETVAL, 0);	// Au départ il n'y a aucun jeton donc la valeur initiale est 0 
-	semctl(semID, REQ_SEM, SETVAL, 1);	// Au départ il est libre donc on initialise la valeur à 1
-	semctl(semID, NB_PLACE_SEM, SETVAL, 1);	// Au départ il est libre donc on initialise la valeur à 1
-	semctl(semID, PARKING_SEM, SETVAL, 1);	// Proteger la RC tableau de place
+	semctl(semID, REQ_SEM, SETVAL, 1);				// Au départ il est libre donc on initialise la valeur à 1
+	semctl(semID, NB_PLACE_SEM, SETVAL, 1);			// Au départ il est libre donc on initialise la valeur à 1
+	semctl(semID, PARKING_SEM, SETVAL, 1);			// Proteger la RC tableau de place
 
 	// 1.3 Création de la mémoire partagée Parking qui gère le nombre de place, et la position des voitures
 	TableMem[MEM_PARKING] = shmget(ftok(chemin, 1), sizeof(MemParking), IPC_CREAT|DROITS);

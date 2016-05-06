@@ -98,7 +98,6 @@ void LibererPlace(MemParking* nbPlaceStruct, int semId)
 // Fin de LibererPlace
 
 int CreerFileMessage ()
-
 {
 	return msgget(IPC_PRIVATE, 0700 | IPC_CREAT);
 }
