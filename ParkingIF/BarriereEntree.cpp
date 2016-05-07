@@ -144,11 +144,12 @@ static void destructionTache(int noSignal)
 // permettant uen destruction propres de celle-ci.
 {
     if(noSignal == SIGUSR2)
+        
     {
         // On masque le signal SIGCHLD pour éviter que le voiturier 
         // puisse finir de garer la voiture et ainsi l'enlever du
         // vecteur alors que la fonctionne essai de supprimer
-        // l'éléments concerné du vecteur
+        // l'élément concerné du vecteur
         masquerSignal(SIGCHLD);
         
         for( std::vector <Voiturier *>::iterator 
@@ -260,8 +261,8 @@ static void initialisation (int identifiantFilesVoiture ,
     pakingLibre = (MemParking*) shmat(memID, NULL, 0) ;
     requetePartage = (MemRequete*) shmat(memIDRequete, NULL, 0) ;
     Afficher(MESSAGE, LirePlace(pakingLibre,semID) );
+
     // description de l'handler associé à la destruction de la tache.
-    
     struct sigaction action;
     action.sa_handler = destructionTache ;
     sigemptyset(&action.sa_mask);
@@ -272,7 +273,7 @@ static void initialisation (int identifiantFilesVoiture ,
     struct sigaction actionFinVoiturier;
     actionFinVoiturier.sa_handler = finVoiturier ;
     sigemptyset(&actionFinVoiturier.sa_mask);
-    actionFinVoiturier.sa_flags = 0 ;
+    actionFinVoiturier.sa_flags = 0;
     
     
     // on  arme les signaux.
